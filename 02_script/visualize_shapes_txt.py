@@ -50,6 +50,7 @@ out_geojson = geojson.FeatureCollection([
     route_to_feature(i['routeId'], i['geometry'])
     for i in output_list])
 
+# write geojson
 out_geojson_path = r"D:\dev\github\GTFS_Visualization\03_temp\t1.geojson"
 with open(out_geojson_path, 'w') as f:
    json.dump(out_geojson, f)
