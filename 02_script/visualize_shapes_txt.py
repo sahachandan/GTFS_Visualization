@@ -5,7 +5,8 @@ import geojson
 import json
 
 # shapes.txt path
-input_path = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\shapes.txt"
+input_path_shapesTxt = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\shapes.txt"
+input_path_routesTxt = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\routes.txt"
 
 # with open(input_path) as input_file:
 #     for line in input_file:
@@ -14,14 +15,21 @@ input_path = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\shapes.
 #         temp_line = line.split(',')
 #         input_list.append(temp_line)
 
+# Text file to List
+def textToList(text_file):
+    t1 = pd.read_csv(text_file)
+    l1 = t1.to_dict('records')
+    return l1
 
 # Conver shapes.txt into list
-df = pd.read_csv(input_path)
-list_1 = df.to_dict('records')
+list_shape = textToList(input_path_shapesTxt)
+
+# Conver routes.txt into list
+list_routes = textToList(input_path_routesTxt)
 
 # Storing coordinates in dict as per 'shape_id'
 dct_1 = {}
-for items in list_1:
+for items in list_shape:
 
     if items['shape_id'] not in dct_1:
         dct_1[items['shape_id']] = [[items['shape_pt_lon'],items['shape_pt_lat']]]
