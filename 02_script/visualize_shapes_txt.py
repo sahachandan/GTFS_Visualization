@@ -6,6 +6,7 @@ import json
 
 # shapes.txt path
 input_path_shapesTxt = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\shapes.txt"
+input_path_tripsTxt = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\trips.txt"
 input_path_routesTxt = r"D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data\routes.txt"
 
 # with open(input_path) as input_file:
@@ -25,7 +26,11 @@ def textToList(text_file):
 list_shape = textToList(input_path_shapesTxt)
 
 # Conver routes.txt into list
+list_trips = textToList(input_path_tripsTxt)
+
+# Conver routes.txt into list
 list_routes = textToList(input_path_routesTxt)
+print(list_routes)
 
 # Storing coordinates in dict as per 'shape_id'
 dct_1 = {}
