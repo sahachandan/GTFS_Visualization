@@ -132,8 +132,8 @@ with open(stops_geojson_path, 'w') as f:
 # initiate map object
 m = folium.Map(
     #location = [10.0727,76.3336],
-    tiles='cartodbpositron',
-    #tiles = None,
+    #tiles='cartodbpositron',
+    tiles = None,
     zoom_start = 16,
     control_scale = True)
 
