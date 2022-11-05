@@ -29,13 +29,10 @@ def textToList(text_file):
     l1 = t1.to_dict('records')
     return l1
 
-# Conver routes.txt into list
+# Conver text files into list
+list_agency = textToList(input_path_agencyTxt)
 list_routes = textToList(input_path_routesTxt)
-
-# Conver trips.txt into list
 list_trips = textToList(input_path_tripsTxt)
-
-# Conver shapes.txt into list
 list_shape = textToList(input_path_shapesTxt)
 
 
@@ -117,6 +114,6 @@ dta.plot(color="#f5f5f5")
 #ax = plt.axes()
 #ax.set_facecolor("yellow")
 
-plt.title("Kochi Metro")
+plt.title(list_agency[0]['agency_name'])
 
 plt.show()
