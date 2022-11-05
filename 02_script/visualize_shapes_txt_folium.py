@@ -90,7 +90,7 @@ for key,value in dct_1.items():
     output_list.append(d2)
 
 
-# convert above list to geojson
+# convert to geojson
 def shape_to_feature(routeId, shapeId, routeLongName, routeColor, geo):
     return {
         'type': 'Feature',
@@ -129,7 +129,20 @@ stops_geojson_path = os.path.join(output_folder, 'stops.geojson')
 with open(stops_geojson_path, 'w') as f:
    json.dump(stops_geojson, f)
 
-m = folium.Map(location = [10.0727,76.3336], tiles='cartodbpositron', zoom_start = 8, control_scale = True)
+# initiate map object
+m = folium.Map(
+    #location = [10.0727,76.3336],
+    #tiles='cartodbpositron',
+    tiles = None,
+    zoom_start = 16,
+    control_scale = True)
+
+# Adding map heading
+map_heading = list_agency[0]['agency_name'].upper()
+title_html = '''
+             <h3 align="center" style="font-size:16px"><b>{}</b></h3>
+             '''.format(map_heading)
+m.get_root().html.add_child(folium.Element(title_html))
 
 # specifying properties from GeoJSON
 shapes_style_function = lambda x: {
@@ -146,6 +159,7 @@ shapes_highlight_function = lambda x: {
     #'dashArray': '3,6'
 }
 
+# Plotting geojson
 stops_map = folium.features.GeoJson(
     stops_geojson_path,
     name = 'stops',
@@ -174,6 +188,9 @@ shapes_map = folium.features.GeoJson(
 
 m.add_child(stops_map)
 m.add_child(shapes_map)
+
+# To zoom on data extent
+m.fit_bounds(m.get_bounds(), padding=(30, 30))
 
 # saving the map to html file and oppening it in default browser upon script execution
 html_path = os.path.join(output_folder, 'map.html')
