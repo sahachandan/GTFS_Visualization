@@ -15,6 +15,7 @@ input_path_agencyTxt = os.path.join(input_folder, 'agency.txt')
 input_path_routesTxt = os.path.join(input_folder, 'routes.txt')
 input_path_tripsTxt = os.path.join(input_folder, 'trips.txt')
 input_path_shapesTxt = os.path.join(input_folder, 'shapes.txt')
+input_path_stopsTxt = os.path.join(input_folder, 'stops.txt')
 
 # with open(input_path) as input_file:
 #     for line in input_file:
@@ -34,6 +35,7 @@ list_agency = textToList(input_path_agencyTxt)
 list_routes = textToList(input_path_routesTxt)
 list_trips = textToList(input_path_tripsTxt)
 list_shape = textToList(input_path_shapesTxt)
+list_stops = textToList(input_path_stopsTxt)
 
 
 # Listing unique route_id per shape_id
@@ -87,7 +89,7 @@ for key,value in dct_1.items():
 
 
 # convert above list to geojson
-def route_to_feature(routeId, shapeId, routeColor, geo):
+def shape_to_feature(routeId, shapeId, routeColor, geo):
     return {
         'type': 'Feature',
         'geometry': geo,
@@ -98,19 +100,38 @@ def route_to_feature(routeId, shapeId, routeColor, geo):
         }
     }
 
-out_geojson = geojson.FeatureCollection([
-    route_to_feature(i['routeId'], i['shapeId'], i['routeColor'], i['geometry'])
+def stops_to_feature(stop_lon, stop_lat, stop_name):
+    return {
+        'type': 'Feature',
+        'geometry': {'type':'Point', 'coordinates': [stop_lon, stop_lat]},
+        'properties': {
+            'stop_name': stop_name
+        }
+    }
+
+shapes_geojson = geojson.FeatureCollection([
+    shape_to_feature(i['routeId'], i['shapeId'], i['routeColor'], i['geometry'])
     for i in output_list])
 
+stops_geojson = geojson.FeatureCollection([
+    stops_to_feature(i['stop_lon'], i['stop_lat'], i['stop_name'])
+    for i in list_stops])
+
 # write geojson
-out_geojson_path = os.path.join(output_folder, 't1.geojson')
-with open(out_geojson_path, 'w') as f:
-   json.dump(out_geojson, f)
+shapes_geojson_path = os.path.join(output_folder, 'shapes.geojson')
+with open(shapes_geojson_path, 'w') as f:
+   json.dump(shapes_geojson, f)
+
+stops_geojson_path = os.path.join(output_folder, 'stops.geojson')
+with open(stops_geojson_path, 'w') as f:
+   json.dump(stops_geojson, f)
 
 plt.rcParams.update({'axes.facecolor':'black'})
-dta = gpd.read_file(out_geojson_path)
+dta = gpd.read_file(stops_geojson_path)
+dta1 = gpd.read_file(shapes_geojson_path)
 
 dta.plot(color="#f5f5f5")
+dta1.plot(color="#f5f5f5")
 #ax = plt.axes()
 #ax.set_facecolor("yellow")
 
