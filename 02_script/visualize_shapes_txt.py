@@ -60,6 +60,7 @@ for h in unique_shape_list:
         dct_1 = {}
         if (h['route_id'] == r['route_id']):
             dct_1['route_id'] = h['route_id']
+            dct_1['route_long_name'] = r['route_long_name']
             dct_1['shape_id'] = h['shape_id']
             dct_1['route_color'] = r['route_color']
             unique_shape_list_clr.append(dct_1)
@@ -84,19 +85,21 @@ for key,value in dct_1.items():
         if d2['shapeId'] == i['shape_id']:
             d2['routeId'] = i['route_id']
             d2['routeColor'] = i['route_color']
+            d2['route_long_name'] = i['route_long_name']
             break
     output_list.append(d2)
 
 
 # convert above list to geojson
-def shape_to_feature(routeId, shapeId, routeColor, geo):
+def shape_to_feature(routeId, shapeId, routeLongName, routeColor, geo):
     return {
         'type': 'Feature',
         'geometry': geo,
         'properties': {
             'route_id': routeId,
             'shape_id': shapeId,
-            'route_color': routeColor
+            'route_long_name': routeLongName,
+            'route_color': '#{}'.format(routeColor)
         }
     }
 
@@ -110,7 +113,7 @@ def stops_to_feature(stop_lon, stop_lat, stop_name):
     }
 
 shapes_geojson = geojson.FeatureCollection([
-    shape_to_feature(i['routeId'], i['shapeId'], i['routeColor'], i['geometry'])
+    shape_to_feature(i['routeId'], i['shapeId'], i['route_long_name'], i['routeColor'], i['geometry'])
     for i in output_list])
 
 stops_geojson = geojson.FeatureCollection([
@@ -128,10 +131,10 @@ with open(stops_geojson_path, 'w') as f:
 
 plt.rcParams.update({'axes.facecolor':'black'})
 dta = gpd.read_file(stops_geojson_path)
-dta1 = gpd.read_file(shapes_geojson_path)
+#dta1 = gpd.read_file(shapes_geojson_path)
 
 dta.plot(color="#f5f5f5")
-dta1.plot(color="#f5f5f5")
+#dta1.plot(color="#f5f5f5")
 #ax = plt.axes()
 #ax.set_facecolor("yellow")
 
