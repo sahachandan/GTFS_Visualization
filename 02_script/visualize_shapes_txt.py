@@ -131,10 +131,10 @@ with open(stops_geojson_path, 'w') as f:
 
 plt.rcParams.update({'axes.facecolor':'black'})
 dta = gpd.read_file(stops_geojson_path)
-#dta1 = gpd.read_file(shapes_geojson_path)
+dta1 = gpd.read_file(shapes_geojson_path)
 
 dta.plot(color="#f5f5f5")
-#dta1.plot(color="#f5f5f5")
+dta1.plot(color="#f5f5f5")
 #ax = plt.axes()
 #ax.set_facecolor("yellow")
 
