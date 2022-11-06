@@ -1,0 +1,3 @@
+agency_id,agency_url,agency_lang,agency_name,agency_phone,agency_timezone,agency_fare_url,tts_agency_name
+785,http://www.unitedwaymahaska.org/oskaloosarides,en,10-15 Transit,800-227-6390,America/Chicago,,
+751,http://www.cityofottumwa.com/departments/transit/,en,Ottumwa Transit,641-683-0695,America/Chicago,,
