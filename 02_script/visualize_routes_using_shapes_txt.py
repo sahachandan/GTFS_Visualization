@@ -16,7 +16,7 @@ input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL_Open_Data'
 output_folder = r'D:\dev\github\GTFS_Visualization\03_out'
 
 # if 'y' OSM will appear as basemap
-basemap_on = ''
+basemap_on = 'y'
 
 def bcg_map():
     if basemap_on == 'y':
@@ -235,7 +235,7 @@ m.add_child(shapes_map)
 # To zoom on data extent
 m.fit_bounds(m.get_bounds(), padding=(30, 30))
 
-# saving the map to html file and oppening it in default browser upon script execution
+# saving the map to html file and oppening it in default browser
 html_path = os.path.join(output_folder, '{}_map.html'.format(output_file_prefix))
 m.save(html_path)
 webbrowser.open(html_path)

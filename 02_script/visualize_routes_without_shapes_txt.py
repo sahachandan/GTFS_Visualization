@@ -277,7 +277,7 @@ folium.LayerControl().add_to(m)
 # To zoom on data extent
 m.fit_bounds(m.get_bounds(), padding=(30, 30))
 
-# saving the map to html file and oppening it in default browser upon script execution
+# saving the map to html file and oppening it in default browser
 html_path = os.path.join(output_folder, '{}_map.html'.format(output_file_prefix))
 m.save(html_path)
 webbrowser.open(html_path)
