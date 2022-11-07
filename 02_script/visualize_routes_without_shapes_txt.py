@@ -11,13 +11,13 @@ import pandas as pd
 
 
 # GTFS folder location
-input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL_Open_Data'
+input_folder = r'D:\dev\github\GTFS_Visualization\01_source\Open_Data_MMTS_Hyd'
 
 # Output folder location to store geojson, html files
 output_folder = r'D:\dev\github\GTFS_Visualization\03_out'
 
 # If basemap_on = 'y' OSM will appear as basemap
-basemap_on = 'y'
+basemap_on = ''
 
 def bcg_map():
     if basemap_on == 'y':
