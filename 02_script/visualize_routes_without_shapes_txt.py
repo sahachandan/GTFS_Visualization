@@ -1,14 +1,37 @@
+# Python: v3.9.13, OS: Windows 11
+
 import os
+import sys
 import json
+import random
 import geojson
-import pandas as pd
 import folium
 import webbrowser
+import pandas as pd
+
 
 # GTFS folder location
-input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data'
+input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL_Open_Data'
 
-output_folder = r'D:\dev\github\GTFS_Visualization\03_temp' # to store temporary file
+# Output folder location to store geojson, html files
+output_folder = r'D:\dev\github\GTFS_Visualization\03_out'
+
+# If basemap_on = 'y' OSM will appear as basemap
+basemap_on = 'y'
+
+def bcg_map():
+    if basemap_on == 'y':
+        return 'openstreetmap'
+    else:
+        return None
+
+# Create output folder if not exist
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# Output file name prefix
+output_file_prefix = 'script2_{}'.format(((input_folder.split('\\')[-1]).replace(' ','_')).lower())
+
 
 # Reading text files
 input_path_agencyTxt = os.path.join(input_folder, 'agency.txt')
@@ -31,105 +54,122 @@ def textToList(text_file):
     return l1
 
 # Conver text files into list
-list_agency = textToList(input_path_agencyTxt)
-list_routes = textToList(input_path_routesTxt)
-list_trips = textToList(input_path_tripsTxt)
-list_stop_times = textToList(input_path_stopTimes)
-list_stops = textToList(input_path_stopsTxt)
+try:
+    list_agency = textToList(input_path_agencyTxt)
+    list_routes = textToList(input_path_routesTxt)
+    list_trips = textToList(input_path_tripsTxt)
+    list_stop_times = textToList(input_path_stopTimes)
+    list_stops = textToList(input_path_stopsTxt)
+except:
+    print('''
+    Error: File missing
+    Make sure to run this script following files are available in input directory:
+                1. agency.txt
+                2. routes.txt
+                3. trips.txt
+                4. stops.txt
+                5. stop_times.txt''')
+    sys.exit()
 
+# sorting up stop_times.txt based on stop_sequence
 def sort_stop_sequence(e):
   return e['stop_sequence']
-
-
 list_stop_times.sort(key=sort_stop_sequence)
-print('sort_end')
 
-dct_1 = {}
+# Update route_color if not exist in routes.txt
+for i in list_routes:
+    if not 'route_color' in i:
+        i['route_color'] = "%06x" % random.randint(0, 0xFFFFFF)
+    if 'route_color' in i:
+        if (str(i['route_color']) == 'nan' or str(i['route_color']) == ''):
+            i['route_color'] = "%06x" % random.randint(0, 0xFFFFFF)
+
+
+# Storing list of Stops per Trips
+dct_trip_stop = {}
 for items in list_stop_times:
-    if items['trip_id'] not in dct_1:
-        dct_1[items['trip_id']] = [items['stop_id']]
+    if items['trip_id'] not in dct_trip_stop:
+        dct_trip_stop[items['trip_id']] = [items['stop_id']]
     else:
-        dct_1[items['trip_id']].append(items['stop_id'])
-print('dct1_end')
+        dct_trip_stop[items['trip_id']].append(items['stop_id'])
 
-dct_2 = {}
+
+# Storing list of Trips per Routes
+dct_route_trip = {}
 for items in list_trips:
-    if items['route_id'] not in dct_2:
-        dct_2[items['route_id']] = [items['trip_id']]
+    if items['route_id'] not in dct_route_trip:
+        dct_route_trip[items['route_id']] = [items['trip_id']]
     else:
-        dct_2[items['route_id']].append(items['trip_id'])
+        dct_route_trip[items['route_id']].append(items['trip_id'])
 
-
-l_1 = []
-print('start')
-for key,value in dct_2.items():
+# Storing route_id, stop_id, trip_id, route_color in a new list
+list_1 = []
+for key,value in dct_route_trip.items():
     for i in value:
-        for k,v in dct_1.items():
-            dct_3 = {}
+        for k,v in dct_trip_stop.items():
+            dct_1 = {}
             if i == k:
-                dct_3['route'] = key
-                dct_3['stops'] = v
-                dct_3['trip_id'] = k
+                dct_1['route_id'] = key
+                dct_1['stop_id'] = v
+                dct_1['trip_id'] = k
                 for r in list_routes:
                     if key == r['route_id']:
-                        # dct_3['route_color'] = r['route_color']
-                        dct_3['route_color'] = '00B7F3'
+                        dct_1['route_color'] = r['route_color']
                         break
-                l_1.append(dct_3)
+                list_1.append(dct_1)
                 break
 
-print('l_1_end')
 
-# for key, value in dct_1.items():
-#     print('{}: {}'.format(key, len(value)))
-
-unique_route = []
+# Storing Routes with unique Stops in a new list
+list_unique_route = []
 cnt = 0
-for i in l_1:
+for i in list_1:
     if cnt == 0:
-        unique_route.append({'route': i['route'], 'stops': i['stops'], 'route_color': i['route_color']})
+        list_unique_route.append({'route_id': i['route_id'], 'stop_id': i['stop_id'], 'route_color': i['route_color']})
     cnt += 1    
-    for j in unique_route:
-        if (str(i['route']) == str(j['route']) and str(i['stops']) == str(j['stops'])):
+    for j in list_unique_route:
+        if (str(i['route_id']) == str(j['route_id']) and str(i['stop_id']) == str(j['stop_id'])):
             chck = 1
     if chck == 0:
-        unique_route.append({'route': i['route'], 'stops': i['stops'], 'route_color': i['route_color']})
+        list_unique_route.append({'route_id': i['route_id'], 'stop_id': i['stop_id'], 'route_color': i['route_color']})
     chck = 0
 
-print('start')
-new = []
-for i in unique_route:
-    li = []
-    li_name = []
-    dct_4 = {}
-    start_stop = i['stops'][0]
-    end_stop = i['stops'][-1]
+# Adding up stop_name, stop_location
+list_all = []
+for i in list_unique_route:
+    lst_geo = []
+    dct_2 = {}
+    start_stop = i['stop_id'][0]
+    end_stop = i['stop_id'][-1]
     start_stop_name = 'dummy'
     end_stop_name = 'dummy'
-    for j in i['stops']:
+    for j in i['stop_id']:
         for k in list_stops:
             if (j == start_stop and k['stop_id'] == start_stop):
                 start_stop_name = k['stop_name']
             if (j == end_stop and k['stop_id'] == end_stop):
                 end_stop_name = k['stop_name']
             if str(j) == str(k['stop_id']):
-                li.append([k['stop_lon'], k['stop_lat']])
+                lst_geo.append([k['stop_lon'], k['stop_lat']])
                 break
-    dct_4['routeId'] = i['route']
-    dct_4['stops'] = i['stops']
-    dct_4['geometry'] = li
-    dct_4['from_to'] = '{} -> {}'.format(start_stop_name, end_stop_name)
-    dct_4['routeColor'] = i['route_color']
-    new.append(dct_4)
-#print(new[0])
+    dct_2['routeId'] = i['route_id']
+    dct_2['stops'] = i['stop_id']
+    dct_2['stop_count'] = len(i['stop_id'])
+    dct_2['geometry'] = lst_geo
+    dct_2['from_to'] = '{} TO {}'.format(start_stop_name, end_stop_name)
+    dct_2['routeColor'] = i['route_color']
+    list_all.append(dct_2)
 
-def shape_to_feature(routeId, fromTo, routeColor, geo):
+
+# convert to geojson
+def shape_to_feature(routeId, fromTo, stopCount, routeColor, geo):
     return {
         'type': 'Feature',
         'geometry': {'type':'LineString', 'coordinates': geo},
         'properties': {
             'route_id': routeId,
             'from_to': fromTo,
+            'stop_count': stopCount,
             'route_color': '#{}'.format(routeColor)
         }
     }
@@ -144,29 +184,33 @@ def stops_to_feature(stop_lon, stop_lat, stop_name):
     }
 
 shapes_geojson = geojson.FeatureCollection([
-    shape_to_feature(i['routeId'], i['from_to'], i['routeColor'], i['geometry'])
-    for i in new])
+    shape_to_feature(i['routeId'], i['from_to'], i['stop_count'], i['routeColor'], i['geometry'])
+    for i in list_all])
 
 stops_geojson = geojson.FeatureCollection([
     stops_to_feature(i['stop_lon'], i['stop_lat'], i['stop_name'])
     for i in list_stops])
 
 # write geojson
-shapes_geojson_path = os.path.join(output_folder, 'shapes.geojson')
+shapes_geojson_path = os.path.join(output_folder, '{}_shapes.geojson'.format(output_file_prefix))
 with open(shapes_geojson_path, 'w') as f:
    json.dump(shapes_geojson, f)
 
-stops_geojson_path = os.path.join(output_folder, 'stops.geojson')
+stops_geojson_path = os.path.join(output_folder, '{}_stops.geojson'.format(output_file_prefix))
 with open(stops_geojson_path, 'w') as f:
    json.dump(stops_geojson, f)
+
 
 # initiate map object
 m = folium.Map(
     #location = [10.0727,76.3336],
     #tiles='cartodbpositron',
-    tiles = None,
+    tiles = bcg_map(),
     zoom_start = 16,
     control_scale = True)
+
+shape_Layer = folium.FeatureGroup(name='shapes_geom').add_to(m)
+stops_Layer = folium.FeatureGroup(name='stops_geom').add_to(m)
 
 # Adding map heading
 map_heading = list_agency[0]['agency_name'].upper()
@@ -178,7 +222,7 @@ m.get_root().html.add_child(folium.Element(title_html))
 # specifying properties from GeoJSON
 shapes_style_function = lambda x: {
     'color': x['properties']['route_color'],
-    'opacity': 1,
+    'opacity': 0.6,
     'weight': '4',
     #'dashArray': '3,6'
 }
@@ -186,16 +230,20 @@ shapes_style_function = lambda x: {
 shapes_highlight_function = lambda x: {
     'color': 'yellow',
     'opacity': 1,
-    'weight': '6',
+    'weight': '10',
     #'dashArray': '3,6'
 }
 
 # Plotting geojson
-stops_map = folium.features.GeoJson(
+stops_map = folium.GeoJson(
     stops_geojson_path,
     name = 'stops',
     control = True,
-    tooltip= folium.features.GeoJsonTooltip(
+    # marker = folium.Marker( # Radius in metres
+    #                         icon_size = 0, #outline weight
+    #                         icon = folium.Icon(color='darkblue'), 
+    #                         fill_opacity = 1),
+    tooltip= folium.GeoJsonTooltip(
         fields=['stop_name'],
         aliases=['Stop Name: '],
         # setting style for popup box
@@ -203,27 +251,32 @@ stops_map = folium.features.GeoJson(
         )
 )
 
-shapes_map = folium.features.GeoJson(
+shapes_map = folium.GeoJson(
     shapes_geojson_path,
     name = 'shapes',
     control = True,
     style_function = shapes_style_function,
     highlight_function = shapes_highlight_function,
-    tooltip=folium.features.GeoJsonTooltip(
+    tooltip=folium.GeoJsonTooltip(
         # using fields from the geojson file
-        fields=['from_to', 'route_id'],
-        aliases=['Route: ', 'Route_ID: '],
+        fields=['from_to', 'stop_count', 'route_id'],
+        aliases=['Route: ', 'Total Stops: ', 'Route_ID: '],
         style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;")
   )
 )
 
-m.add_child(stops_map)
-m.add_child(shapes_map)
+shapes_map.add_to(shape_Layer)
+stops_map.add_to(stops_Layer)
+
+# m.add_child(stops_map)
+# m.add_child(shapes_map)
+
+folium.LayerControl().add_to(m)
 
 # To zoom on data extent
 m.fit_bounds(m.get_bounds(), padding=(30, 30))
 
 # saving the map to html file and oppening it in default browser upon script execution
-html_path = os.path.join(output_folder, 'map.html')
+html_path = os.path.join(output_folder, '{}_map.html'.format(output_file_prefix))
 m.save(html_path)
 webbrowser.open(html_path)

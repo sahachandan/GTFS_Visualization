@@ -1,14 +1,36 @@
+# Python: v3.9.13, OS: Windows 11
+
 import os
+import sys
 import json
+import random
 import geojson
-import pandas as pd
 import folium
 import webbrowser
+import pandas as pd
 
 # GTFS folder location
-input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL-Open-Data'
+input_folder = r'D:\dev\github\GTFS_Visualization\01_source\KMRL_Open_Data'
 
-output_folder = r'D:\dev\github\GTFS_Visualization\03_temp' # to store temporary file
+# Output folder location to store geojson, html files
+output_folder = r'D:\dev\github\GTFS_Visualization\03_out'
+
+# if 'y' OSM will appear as basemap
+basemap_on = ''
+
+def bcg_map():
+    if basemap_on == 'y':
+        return 'openstreetmap'
+    else:
+        return None
+
+# Create output folder if not exist
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# Output file name prefix
+output_file_prefix = 'script1_{}'.format(((input_folder.split('\\')[-1]).replace(' ','_')).lower())
+
 
 # Reading text files
 input_path_agencyTxt = os.path.join(input_folder, 'agency.txt')
@@ -31,11 +53,31 @@ def textToList(text_file):
     return l1
 
 # Conver text files into list
-list_agency = textToList(input_path_agencyTxt)
-list_routes = textToList(input_path_routesTxt)
-list_trips = textToList(input_path_tripsTxt)
-list_shape = textToList(input_path_shapesTxt)
-list_stops = textToList(input_path_stopsTxt)
+try:
+    list_agency = textToList(input_path_agencyTxt)
+    list_routes = textToList(input_path_routesTxt)
+    list_trips = textToList(input_path_tripsTxt)
+    list_shape = textToList(input_path_shapesTxt)
+    list_stops = textToList(input_path_stopsTxt)
+except:
+    print('''
+    Error: File missing
+    Make sure to run this script following files are available in input directory:
+                1. agency.txt
+                2. routes.txt
+                3. trips.txt
+                4. stops.txt
+                5. shapes.txt''')
+    sys.exit()
+
+
+# Update route_color if not exist in routes.txt
+for i in list_routes:
+    if not 'route_color' in i:
+        i['route_color'] = "%06x" % random.randint(0, 0xFFFFFF)
+    if 'route_color' in i:
+        if (str(i['route_color']) == 'nan' or str(i['route_color']) == ''):
+            i['route_color'] = "%06x" % random.randint(0, 0xFFFFFF)
 
 
 # Listing unique route_id per shape_id
@@ -121,11 +163,11 @@ stops_geojson = geojson.FeatureCollection([
     for i in list_stops])
 
 # write geojson
-shapes_geojson_path = os.path.join(output_folder, 'shapes.geojson')
+shapes_geojson_path = os.path.join(output_folder, '{}_shapes.geojson'.format(output_file_prefix))
 with open(shapes_geojson_path, 'w') as f:
    json.dump(shapes_geojson, f)
 
-stops_geojson_path = os.path.join(output_folder, 'stops.geojson')
+stops_geojson_path = os.path.join(output_folder, '{}_stops.geojson'.format(output_file_prefix))
 with open(stops_geojson_path, 'w') as f:
    json.dump(stops_geojson, f)
 
@@ -133,7 +175,7 @@ with open(stops_geojson_path, 'w') as f:
 m = folium.Map(
     #location = [10.0727,76.3336],
     #tiles='cartodbpositron',
-    tiles = None,
+    tiles = bcg_map(),
     zoom_start = 16,
     control_scale = True)
 
@@ -147,7 +189,7 @@ m.get_root().html.add_child(folium.Element(title_html))
 # specifying properties from GeoJSON
 shapes_style_function = lambda x: {
     'color': x['properties']['route_color'],
-    'opacity': 1,
+    'opacity': 0.6,
     'weight': '4',
     #'dashArray': '3,6'
 }
@@ -155,9 +197,10 @@ shapes_style_function = lambda x: {
 shapes_highlight_function = lambda x: {
     'color': 'yellow',
     'opacity': 1,
-    'weight': '6',
+    'weight': '8',
     #'dashArray': '3,6'
 }
+
 
 # Plotting geojson
 stops_map = folium.features.GeoJson(
@@ -193,6 +236,6 @@ m.add_child(shapes_map)
 m.fit_bounds(m.get_bounds(), padding=(30, 30))
 
 # saving the map to html file and oppening it in default browser upon script execution
-html_path = os.path.join(output_folder, 'map.html')
+html_path = os.path.join(output_folder, '{}_map.html'.format(output_file_prefix))
 m.save(html_path)
 webbrowser.open(html_path)
