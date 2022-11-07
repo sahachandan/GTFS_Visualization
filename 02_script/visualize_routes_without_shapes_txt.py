@@ -209,6 +209,7 @@ m = folium.Map(
     zoom_start = 16,
     control_scale = True)
 
+# Feature group to store layer
 shape_Layer = folium.FeatureGroup(name='shapes_geom').add_to(m)
 stops_Layer = folium.FeatureGroup(name='stops_geom').add_to(m)
 
