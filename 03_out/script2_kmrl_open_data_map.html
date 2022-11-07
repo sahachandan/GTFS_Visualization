@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_9a443a90d0b84611d1b184fbad5b61ff {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+    
+                    <style>
+                        .foliumtooltip {
+                            background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+    
+                    <style>
+                        .foliumtooltip {
+                            background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+</head>
+<body>    
+    
+             <h3 align="center" style="font-size:16px"><b>KOCHI METRO</b></h3>
+             
+    
+            <div class="folium-map" id="map_9a443a90d0b84611d1b184fbad5b61ff" ></div>
+        
+</body>
+<script>    
+    
+            var map_9a443a90d0b84611d1b184fbad5b61ff = L.map(
+                "map_9a443a90d0b84611d1b184fbad5b61ff",
+                {
+                    center: [0, 0],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 1,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+            L.control.scale().addTo(map_9a443a90d0b84611d1b184fbad5b61ff);
+
+            
+
+        
+    
+            var feature_group_9929e890d7fbe49baf144a43e066d2a6 = L.featureGroup(
+                {}
+            ).addTo(map_9a443a90d0b84611d1b184fbad5b61ff);
+        
+    
+        function geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_styler(feature) {
+            switch(feature.properties.from_to) {
+                default:
+                    return {"color": "#00B7F3", "opacity": 0.6, "weight": "4"};
+            }
+        }
+        function geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_highlighter(feature) {
+            switch(feature.properties.from_to) {
+                default:
+                    return {"color": "yellow", "opacity": 1, "weight": "10"};
+            }
+        }
+
+        function geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_onEachFeature(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                        geo_json_6f5cf8e39dbe32a270a6b09d78f131ec.resetStyle(e.target);
+                    }
+                },
+                mouseover: function(e) {
+                    if(typeof e.target.setStyle === "function"){
+                        const highlightStyle = geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_highlighter(e.target.feature)
+                        e.target.setStyle(highlightStyle);
+                    }
+                },
+            });
+        };
+        var geo_json_6f5cf8e39dbe32a270a6b09d78f131ec = L.geoJson(null, {
+                onEachFeature: geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_onEachFeature,
+            
+                style: geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_styler,
+        });
+
+        function geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_add (data) {
+            geo_json_6f5cf8e39dbe32a270a6b09d78f131ec
+                .addData(data)
+                .addTo(feature_group_9929e890d7fbe49baf144a43e066d2a6);
+        }
+            geo_json_6f5cf8e39dbe32a270a6b09d78f131ec_add({"features": [{"geometry": {"coordinates": [[76.3495, 10.1099], [76.3466, 10.0951], [76.3428, 10.0873], [76.3389, 10.0793], [76.3336, 10.0727], [76.322, 10.0586], [76.3182, 10.0467], [76.3144, 10.0361], [76.3083, 10.0251], [76.3023, 10.0152], [76.3048, 10.0064], [76.2989, 10.0002], [76.2914, 9.9943], [76.2884, 9.9914], [76.2823, 9.9834], [76.2851, 9.9732]], "type": "LineString"}, "properties": {"from_to": "Aluva TO Maharaja College", "route_color": "#00B7F3", "route_id": "R001", "stop_count": 16}, "type": "Feature"}, {"geometry": {"coordinates": [[76.2851, 9.9732], [76.2823, 9.9834], [76.2884, 9.9914], [76.2914, 9.9943], [76.2989, 10.0002], [76.3048, 10.0064], [76.3023, 10.0152], [76.3083, 10.0251], [76.3144, 10.0361], [76.3182, 10.0467], [76.322, 10.0586], [76.3336, 10.0727], [76.3389, 10.0793], [76.3428, 10.0873], [76.3466, 10.0951], [76.3495, 10.1099]], "type": "LineString"}, "properties": {"from_to": "Maharaja College TO Aluva", "route_color": "#00B7F3", "route_id": "R001", "stop_count": 16}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+    geo_json_6f5cf8e39dbe32a270a6b09d78f131ec.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature=>typeof(feature)=='object' ? JSON.stringify(feature) : feature;
+    let fields = ["from_to", "stop_count", "route_id"];
+    let aliases = ["Route: ", "Total Stops: ", "Route_ID: "];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i]}</th>
+            
+            <td>${handleObject(layer.feature.properties[v])}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{"className": "foliumtooltip", "sticky": true});
+                     
+    
+            var feature_group_1ef3cb2ac96c48dc6502eda5e5627fee = L.featureGroup(
+                {}
+            ).addTo(map_9a443a90d0b84611d1b184fbad5b61ff);
+        
+    
+
+        function geo_json_e5b5242a890e666bb5898901cf4192de_onEachFeature(feature, layer) {
+            layer.on({
+            });
+        };
+        var geo_json_e5b5242a890e666bb5898901cf4192de = L.geoJson(null, {
+                onEachFeature: geo_json_e5b5242a890e666bb5898901cf4192de_onEachFeature,
+            
+        });
+
+        function geo_json_e5b5242a890e666bb5898901cf4192de_add (data) {
+            geo_json_e5b5242a890e666bb5898901cf4192de
+                .addData(data)
+                .addTo(feature_group_1ef3cb2ac96c48dc6502eda5e5627fee);
+        }
+            geo_json_e5b5242a890e666bb5898901cf4192de_add({"features": [{"geometry": {"coordinates": [76.3495, 10.1099], "type": "Point"}, "properties": {"stop_name": "Aluva"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3466, 10.0951], "type": "Point"}, "properties": {"stop_name": "Pulinchudu"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3428, 10.0873], "type": "Point"}, "properties": {"stop_name": "CompanyPady"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3389, 10.0793], "type": "Point"}, "properties": {"stop_name": "Ambattukavu"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3336, 10.0727], "type": "Point"}, "properties": {"stop_name": "Muttom"}, "type": "Feature"}, {"geometry": {"coordinates": [76.322, 10.0586], "type": "Point"}, "properties": {"stop_name": "Kalamassery"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3182, 10.0467], "type": "Point"}, "properties": {"stop_name": "Cusat"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3144, 10.0361], "type": "Point"}, "properties": {"stop_name": "Pathadipalam"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3083, 10.0251], "type": "Point"}, "properties": {"stop_name": "Edapally Jn."}, "type": "Feature"}, {"geometry": {"coordinates": [76.3023, 10.0152], "type": "Point"}, "properties": {"stop_name": "Changampuzha Park"}, "type": "Feature"}, {"geometry": {"coordinates": [76.3048, 10.0064], "type": "Point"}, "properties": {"stop_name": "Palarivattom"}, "type": "Feature"}, {"geometry": {"coordinates": [76.2989, 10.0002], "type": "Point"}, "properties": {"stop_name": "JLN Stadium"}, "type": "Feature"}, {"geometry": {"coordinates": [76.2914, 9.9943], "type": "Point"}, "properties": {"stop_name": "Kaloor"}, "type": "Feature"}, {"geometry": {"coordinates": [76.2884, 9.9914], "type": "Point"}, "properties": {"stop_name": "Lissie Jn"}, "type": "Feature"}, {"geometry": {"coordinates": [76.2823, 9.9834], "type": "Point"}, "properties": {"stop_name": "MG Road"}, "type": "Feature"}, {"geometry": {"coordinates": [76.2851, 9.9732], "type": "Point"}, "properties": {"stop_name": "Maharaja College"}, "type": "Feature"}], "type": "FeatureCollection"});
+
+        
+    
+    geo_json_e5b5242a890e666bb5898901cf4192de.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature=>typeof(feature)=='object' ? JSON.stringify(feature) : feature;
+    let fields = ["stop_name"];
+    let aliases = ["Stop Name: "];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <th>${aliases[i]}</th>
+            
+            <td>${handleObject(layer.feature.properties[v])}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{"className": "foliumtooltip", "sticky": true});
+                     
+    
+            var layer_control_b7b1ff77dfbf3c686473c69313e62141 = {
+                base_layers : {
+                },
+                overlays :  {
+                    "shapes_geom" : feature_group_9929e890d7fbe49baf144a43e066d2a6,
+                    "stops_geom" : feature_group_1ef3cb2ac96c48dc6502eda5e5627fee,
+                },
+            };
+            L.control.layers(
+                layer_control_b7b1ff77dfbf3c686473c69313e62141.base_layers,
+                layer_control_b7b1ff77dfbf3c686473c69313e62141.overlays,
+                {"autoZIndex": true, "collapsed": true, "position": "topright"}
+            ).addTo(map_9a443a90d0b84611d1b184fbad5b61ff);
+        
+    
+            map_9a443a90d0b84611d1b184fbad5b61ff.fitBounds(
+                [[9.9732, 76.2823], [10.1099, 76.3495]],
+                {"padding": [30, 30]}
+            );
+        
+</script>
