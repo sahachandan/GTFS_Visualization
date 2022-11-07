@@ -1,0 +1,11 @@
+fare_id,price,currency_type,payment_method,transfers
+F_10,10,INR,1,
+F_15,15,INR,1,
+F_25,25,INR,1,
+F_30,30,INR,1,
+F_35,35,INR,1,
+F_40,40,INR,1,
+F_45,45,INR,1,
+F_50,50,INR,1,
+F_55,55,INR,1,
+F_60,60,INR,1,
